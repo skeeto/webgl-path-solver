@@ -5,62 +5,11 @@ function Grid(w, h, s) {
     this.done = false;
     this.age = 0;
     this.fore = new Uint32Array(w * h);
-    this.back = new Uint32Array(w * h);
-    this.fillMaze();
-}
-
-Grid.DIRS = [
-    {x:  0, y: -1},
-    {x:  1, y:  0},
-    {x:  0, y:  1},
-    {x: -1, y:  0}
-];
-
-Grid.shuffle = function(array) {
-    var counter = array.length, temp, index;
-    while (counter > 0) {
-        index = Math.floor(Math.random() * counter);
-        counter--;
-        temp = array[counter];
-        array[counter] = array[index];
-        array[index] = temp;
-    }
-    return array;
-};
-
-Grid.prototype.fillMaze = function() {
-    /* Temporary remove foreground buffer. */
-    var fore = this.fore;
-    this.fore = this.back;
-
-    function fresh() { return Grid.shuffle(Grid.DIRS.slice(0)); };
-    var stack = [{x: 0, y: 0, dirs: fresh()}];
-    while (stack.length > 0) {
-        var top = stack[stack.length - 1];
-        if (top.dirs.length === 0) {
-            stack.pop();
-        } else {
-            var dir = top.dirs.pop();
-            var xx  = top.x + dir.x * 1,
-                yy  = top.y + dir.y * 1,
-                xxx = top.x + dir.x * 2,
-                yyy = top.y + dir.y * 2;
-            if (this.inBounds(xx, yy) && this.get(xxx, yyy) === State.WALL) {
-                this.set(xx, yy, State.OPEN);
-                this.set(xxx, yyy, State.OPEN);
-                stack.push({x: xxx, y: yyy, dirs: fresh()});
-            }
-        }
-    }
-    this.set(0, 0, State.OPEN);
-
+    this.back = Maze.dfs(w, h);
     this.set(0, 0, State.BEGIN);
     this.set(this.w - 1, this.h - 1, State.END);
-
-    /* Restore and swap into place. */
-    this.fore = fore;
     this.swap();
-};
+}
 
 Grid.prototype.swap = function() {
     var tmp = this.fore;
@@ -69,12 +18,8 @@ Grid.prototype.swap = function() {
     return this;
 };
 
-Grid.prototype.inBounds = function(x, y) {
-    return x >= 0 && x < this.w && y >= 0 && y < this.h;
-};
-
 Grid.prototype.get = function(x, y) {
-    if (this.inBounds(x, y)) {
+    if (x >= 0 && x < this.w && y >= 0 && y < this.h) {
         return this.fore[y * this.w + x];
     } else {
         return State.WALL;
