@@ -1,13 +1,13 @@
 /*global State Maze */
 
-function CpuSolver(w, h, canvas) {
+function CpuSolver(maze, w, h, canvas) {
     this.w = w;
     this.h = h;
     this.ctx = canvas == null ? null : canvas.getContext('2d');
     this.done = false;
     this.age = 0;
     this.fore = new Uint32Array(w * h);
-    this.back = Maze.kruskal(w, h);
+    this.back = maze;
 
     this.set(0, 0, State.BEGIN);
     this.set(this.w - 1, this.h - 1, State.END);
