@@ -1,0 +1,16 @@
+body {
+    font-family: sans-serif;
+    width: 602px;
+    margin: 0 auto;
+    background: black;
+    color: salmon;
+}
+
+h1, h2 {
+    text-align: center;
+    margin: 5px 0;
+}
+
+canvas {
+    border: 1px solid gray;
+}
