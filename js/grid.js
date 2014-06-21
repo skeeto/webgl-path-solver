@@ -7,15 +7,11 @@ function Grid(w, h, s) {
     this.back = new Uint32Array(w * h);
     for (var y = 0; y < h; y++) {
         for (var x = 0; x < w; x++) {
-            if (y === 0 || x === 0 || y === h - 1 || x === w - 1) {
-                this.set(x, y, State.WALL);
-            } else {
-                this.set(x, y, Math.random() < 0.2 ? State.WALL : State.OPEN);
-            }
+            this.set(x, y, Math.random() < 0.2 ? State.WALL : State.OPEN);
         }
     }
-    this.set(1, 1, State.BEGIN);
-    this.set(w - 2, h - 2, State.END);
+    this.set(0, 0, State.BEGIN);
+    this.set(w - 1, h - 1, State.END);
     this.swap();
 }
 
