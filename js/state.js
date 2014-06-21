@@ -1,3 +1,6 @@
+/**
+ * A JavaScript version of the 12-state path solving cellular automata.
+ */
 var State = {
     OPEN:    0,
     WALL:    1,
@@ -12,14 +15,27 @@ var State = {
     ROUTE_S: 10,
     ROUTE_W: 11,
 
+    /**
+     * @param {number} state
+     * @returns {boolean} true if state is a FLOW state
+     */
     isFlow: function(state) {
         return state >= 4 && state <= 7;
     },
 
+    /**
+     * @param {number} state
+     * @returns {boolean} true if state is a ROUTE state
+     */
     isRoute: function(state) {
         return state >= 8 && state <= 11;
     },
 
+    /**
+     * @param {Function} f
+     * @param {Array} states
+     * @returns {number} position where predicate f returns true
+     */
     find: function(f, states) {
         for (var i = 0; i < states.length; i++) {
             if (f(states[i])) {
@@ -29,26 +45,52 @@ var State = {
         return -1;
     },
 
+    /**
+     * @param {Array} states
+     * @returns {number} position of the first BEGIN, or -1
+     */
     findBegin: function(states) {
         return State.find(function(x) { return x === State.BEGIN; }, states);
     },
 
+    /**
+     * @param {Array} states
+     * @returns {number} position of the first END, or -1
+     */
     findEnd: function(states) {
         return State.find(function(x) { return x === State.END; }, states);
     },
 
+    /**
+     * @param {Array} states
+     * @returns {number} position of the first FLOW state, or -1
+     */
     findFlow: function(states) {
         return State.find(State.isFlow, states);
     },
 
+    /**
+     * @param {Array} states
+     * @returns {number} position of the first ROUTE state, or -1
+     */
     findRoute: function(states) {
         return State.find(State.isRoute, states);
     },
 
+    /**
+     * @param {number} state
+     * @param {number} relation (0=north, 1=east, 2=south, 3=west)
+     * @returns {boolean} true if state points in given direction
+     */
     pointsAtMe: function(state, relation) {
         return (state % 4) == ((relation + 2) % 4);
     },
 
+    /**
+     * @param {numner} state
+     * @param {Array} states
+     * @returns {number} the next state given neighbors neighbors
+     */
     next: function(state, states) {
         var begin = State.findBegin(states),
             end   = State.findEnd(states),
@@ -79,15 +121,23 @@ var State = {
         }
     },
 
+    /**
+     * @param {number} state
+     * @returns {string} a CSS color representation for a state
+     */
     color: function(state) {
         return ['#fff', '#000', '#0f0', '#070',
                 '#f00', '#f00', '#f00', '#f00',
                 '#00f', '#00f', '#00f', '#00f'][state];
     },
 
+    /**
+     * @param {number} state
+     * @returns {string} the human-readable name for a state
+     */
     name: function(state) {
-        return ['OPEN', 'WALL', 'BEGIN', 'END',
-                'FLOW_N', 'FLOW_E', 'FLOW_S', 'FLOW_W',
+        return ['OPEN',    'WALL',    'BEGIN',   'END',
+                'FLOW_N',  'FLOW_E',  'FLOW_S',  'FLOW_W',
                 'ROUTE_N', 'ROUTE_E', 'ROUTE_S', 'ROUTE_W',
                ][state];
     }
