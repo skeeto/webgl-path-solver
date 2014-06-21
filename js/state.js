@@ -58,6 +58,8 @@ var State = {
         case State.OPEN:
             if (flow >= 0) {
                 return 4 + flow;
+            } else {
+                return state;
             }
         case State.FLOW_N:
         case State.FLOW_E:
