@@ -1,3 +1,5 @@
+/*global Forest */
+
 /**
  * Collection of maze-generation algorithms on typed arrays.
  * @namespace

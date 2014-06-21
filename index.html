@@ -4,17 +4,15 @@
     <title>GPU Pathfinding (WebGL)</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" href="path.css"/>
+    <script src="lib/jquery-2.1.1.min.js"></script>
     <script src="js/forest.js"></script>
     <script src="js/maze.js"></script>
     <script src="js/state.js"></script>
-    <script src="js/grid.js"></script>
+    <script src="js/cpusolver.js"></script>
+    <script src="js/main.js"></script>
   </head>
   <body>
     <h1>WebGL Shortest Path Solver</h1>
-    <canvas id="out" width="600" height="600"></canvas>
-    <script>
-      var g = new Grid(75, 75).draw(out);
-      g.animate(out);
-    </script>
+    <canvas id="display" width="1022" height="510"></canvas>
   </body>
 </html>

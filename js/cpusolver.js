@@ -1,24 +1,27 @@
-/*global State */
+/*global State Maze */
 
-function Grid(w, h, s) {
-    this.w = w; this.h = h; this.s = s || 8;
+function CpuSolver(w, h, canvas) {
+    this.w = w;
+    this.h = h;
+    this.ctx = canvas == null ? null : canvas.getContext('2d');
     this.done = false;
     this.age = 0;
     this.fore = new Uint32Array(w * h);
     this.back = Maze.kruskal(w, h);
+
     this.set(0, 0, State.BEGIN);
     this.set(this.w - 1, this.h - 1, State.END);
     this.swap();
 }
 
-Grid.prototype.swap = function() {
+CpuSolver.prototype.swap = function() {
     var tmp = this.fore;
     this.fore = this.back;
     this.back = tmp;
     return this;
 };
 
-Grid.prototype.get = function(x, y) {
+CpuSolver.prototype.get = function(x, y) {
     if (x >= 0 && x < this.w && y >= 0 && y < this.h) {
         return this.fore[y * this.w + x];
     } else {
@@ -26,12 +29,12 @@ Grid.prototype.get = function(x, y) {
     }
 };
 
-Grid.prototype.set = function(x, y, value) {
+CpuSolver.prototype.set = function(x, y, value) {
     this.back[y * this.w + x] = value;
     return value;
 };
 
-Grid.prototype.step = function(count) {
+CpuSolver.prototype.step = function(count) {
     count = count || 1;
     var states = [null, null, null, null];
     while (count-- > 0 && !this.done) {
@@ -55,27 +58,27 @@ Grid.prototype.step = function(count) {
     return this;
 };
 
-Grid.prototype.draw = function(canvas) {
-    var w = this.w, h = this.h, s = this.s;
-    var ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'purple';
-    ctx.fillRect(0, 0, w * s, h * s); // debug
+CpuSolver.prototype.draw = function() {
+    if (this.ctx == null) return this;
+    var w = this.w, h = this.h, ctx = this.ctx,
+        sx = Math.floor(ctx.canvas.width / w),
+        sy = Math.floor(ctx.canvas.height / h);
     for (var y = 0; y < this.h; y++) {
         for (var x = 0; x < this.w; x++) {
             ctx.fillStyle = State.color(this.get(x, y));
-            ctx.fillRect(s * x, s * y, s, s);
+            ctx.fillRect(sx * x, sy * y, sx, sy);
         }
     }
     return this;
 };
 
-Grid.prototype.animate = function(canvas) {
+CpuSolver.prototype.animate = function(canvas) {
     var _this = this;
-    window.setTimeout(function() {
+    window.requestAnimationFrame(function() {
         if (!_this.done) {
             _this.step().draw(canvas);
         }
         _this.animate(canvas);
-    }, 50);
+    });
     return this;
 };
