@@ -1,8 +1,8 @@
 var State = {
-    BEGIN:   0,
-    END:     1,
-    OPEN:    2,
-    WALL:    3,
+    WALL:    0,
+    OPEN:    1,
+    BEGIN:   2,
+    END:     3,
     FLOW_N:  4,
     FLOW_E:  5,
     FLOW_S:  6,
@@ -80,13 +80,13 @@ var State = {
     },
 
     color: function(state) {
-        return ['#0f0', '#070', '#fff', '#000',
+        return ['#000', '#fff', '#0f0', '#070',
                 '#f00', '#f00', '#f00', '#f00',
                 '#00f', '#00f', '#00f', '#00f'][state];
     },
 
     name: function(state) {
-        return ['BEGIN', 'END', 'OPEN', 'WALL',
+        return ['WALL', 'OPEN', 'BEGIN', 'END',
                 'FLOW_N', 'FLOW_E', 'FLOW_S', 'FLOW_W',
                 'ROUTE_N', 'ROUTE_E', 'ROUTE_S', 'ROUTE_W',
                ][state];
