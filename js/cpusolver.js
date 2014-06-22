@@ -1,7 +1,7 @@
 /*global State */
 
 /**
- * Find the shortest path on a CPU using cellular automata (slow!).
+ * Find the shortest path on the CPU using cellular automata (slow!).
  * @param {number} w width
  * @param {number} h height
  * @param {Uint8Array} maze
