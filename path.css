@@ -1,13 +1,11 @@
 body {
     font-family: sans-serif;
-    width: 1000px;
-    margin: 0 auto;
     background: black;
     color: salmon;
+    text-align: center;
 }
 
 h1, h2 {
-    text-align: center;
     margin: 3px 0;
 }
 
@@ -17,6 +15,7 @@ h1 {
 
 canvas {
     border: 1px solid gray;
+    display: inline-block;
 }
 
 .description {
