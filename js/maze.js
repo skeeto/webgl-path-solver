@@ -165,23 +165,26 @@ Maze.dfs = function(w, h) {
 Maze.prim = function(w, h) {
     var maze = Maze.filled(w, h),
         walls = [
-            {x: 1, y: 0, dx: 1, dy: 0},
-            {x: 0, y: 1, dx: 0, dy: 1}
+            {wx: 1, wy: 0, cx: 2, cy: 0},
+            {wx: 0, wy: 1, cx: 0, cy: 2}
         ];
     maze[Maze.i(0, 0, w, h)] = 0;
     while (walls.length > 0) {
         var wall = Maze.random(walls),
-            x = wall.x + wall.dx,
-            y = wall.y + wall.dy,
-            celli = Maze.i(x, y, w, h),
-            walli = Maze.i(wall.x, wall.y, w, h);
-        if (Maze.inBounds(x, y, w, h) && maze[celli] === 1) {
+            celli = Maze.i(wall.cx, wall.cy, w, h),
+            walli = Maze.i(wall.wx, wall.wy, w, h);
+        if (Maze.inBounds(wall.cx, wall.cy, w, h) && maze[celli] === 1) {
             maze[celli] = 0;
             maze[walli] = 0;
-            walls.push({x: x - 1, y: y, dx: -1, dy:  0});
-            walls.push({x: x + 1, y: y, dx:  1, dy:  0});
-            walls.push({x: x, y: y + 1, dx:  0, dy:  1});
-            walls.push({x: x, y: y - 1, dx:  0, dy: -1});
+            for (var i = 0; i < Maze.DIRS.length; i++) {
+                var dir = Maze.DIRS[i];
+                walls.push({
+                    wx: wall.cx + dir.x * 1,
+                    wy: wall.cy + dir.y * 1,
+                    cx: wall.cx + dir.x * 2,
+                    cy: wall.cy + dir.y * 2
+                });
+            }
         }
     }
     return maze;
