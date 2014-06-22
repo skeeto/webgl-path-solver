@@ -115,6 +115,14 @@ var State = {
         case State.END:
             if (flow >= 0) {
                 return flow + 8;
+            } else {
+                return state;
+            }
+        case State.BEGIN:
+            if (route >= 0) {
+                return states[route];
+            } else {
+                return state;
             }
         default:
             return state;
