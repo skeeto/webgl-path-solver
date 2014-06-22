@@ -130,6 +130,27 @@ var State = {
     },
 
     /**
+     * Simple 3-state maze-solving cellular automata. This is an
+     * alternative to the next() automata above. This could be reduced
+     * to two states if used in the right conditions.
+     * @param {numner} state
+     * @param {Array} states
+     * @returns {number} the next state given neighbors neighbors
+     */
+    simple: function(state, states) {
+        var count =
+                (states[0] === State.WALL ? 1 : 0) +
+                (states[1] === State.WALL ? 1 : 0) +
+                (states[2] === State.WALL ? 1 : 0) +
+                (states[3] === State.WALL ? 1 : 0);
+        if (state === State.OPEN) {
+            return count >= 3 ? State.WALL : state;
+        } else {
+            return state;
+        }
+    },
+
+    /**
      * @param {number} state
      * @returns {string} a CSS color representation for a state
      */
