@@ -1,4 +1,4 @@
-/*global CpuSolver */
+/*global CpuSolver GpuSolver Maze */
 
 var solver = null;
 $(document).ready(function() {
@@ -7,5 +7,5 @@ $(document).ready(function() {
         w = Math.floor(canvas.width / scale),
         h = Math.floor(canvas.height / scale),
         maze = Maze.kruskal(w, h);
-    solver = new CpuSolver(maze, 511, 255, canvas).draw().animate();
+    solver = new GpuSolver(w, h, maze, canvas).draw().animate();
 });

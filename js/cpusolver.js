@@ -1,4 +1,4 @@
-/*global State Maze */
+/*global State */
 
 function CpuSolver(maze, w, h, canvas) {
     this.w = w;
@@ -72,13 +72,13 @@ CpuSolver.prototype.draw = function() {
     return this;
 };
 
-CpuSolver.prototype.animate = function(canvas) {
+CpuSolver.prototype.animate = function() {
     var _this = this;
     window.requestAnimationFrame(function() {
         if (!_this.done) {
-            _this.step().draw(canvas);
+            _this.step().draw();
         }
-        _this.animate(canvas);
+        _this.animate();
     });
     return this;
 };
