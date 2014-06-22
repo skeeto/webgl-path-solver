@@ -107,11 +107,26 @@ CpuSolver.prototype.draw = function() {
     if (this.ctx == null) return this;
     var w = this.w, h = this.h, ctx = this.ctx,
         sx = Math.floor(ctx.canvas.width / w),
-        sy = Math.floor(ctx.canvas.height / h);
+        sy = Math.floor(ctx.canvas.height / h),
+        arrow = sx >= 8 && sy >= 8;
     for (var y = 0; y < this.h; y++) {
         for (var x = 0; x < this.w; x++) {
-            ctx.fillStyle = State.color(this.get(x, y));
+            var state = this.get(x, y);
+            ctx.fillStyle = State.color(state);
             ctx.fillRect(sx * x, sy * y, sx, sy);
+            if (arrow && (State.isFlow(state) || State.isRoute(state))) {
+                ctx.fillStyle = '#333';
+                ctx.save();
+                ctx.scale(sx, sy);
+                ctx.translate(x + 0.5, y + 0.5);
+                ctx.rotate((state % 4) * Math.PI / 2);
+                ctx.beginPath();
+                ctx.moveTo( 0/4, -1/4);
+                ctx.lineTo(-1/4,  1/4);
+                ctx.lineTo( 1/4,  1/4);
+                ctx.fill();
+                ctx.restore();
+            }
         }
     }
     return this;
