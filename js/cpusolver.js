@@ -1,5 +1,12 @@
 /*global State */
 
+/**
+ * Find the shortest path on a CPU using cellular automata (slow!).
+ * @param {number} w width
+ * @param {number} h height
+ * @param {Uint8Array} maze
+ * @param {HTMLCanvasElement} [canvas] for drawing progress
+ */
 function CpuSolver(maze, w, h, canvas) {
     this.w = w;
     this.h = h;
@@ -14,6 +21,10 @@ function CpuSolver(maze, w, h, canvas) {
     this.swap();
 }
 
+/**
+ * Swap the foreground and background buffers.
+ * @returns {CpuSolver} this
+ */
 CpuSolver.prototype.swap = function() {
     var tmp = this.fore;
     this.fore = this.back;
@@ -21,6 +32,11 @@ CpuSolver.prototype.swap = function() {
     return this;
 };
 
+/**
+ * @param {number} x
+ * @param {number} y
+ * @returns {number} the state at (x, y) on the foreground buffer
+ */
 CpuSolver.prototype.get = function(x, y) {
     if (x >= 0 && x < this.w && y >= 0 && y < this.h) {
         return this.fore[y * this.w + x];
@@ -29,15 +45,27 @@ CpuSolver.prototype.get = function(x, y) {
     }
 };
 
+/**
+ * Sets the state on the background buffer.
+ * @param {number} x
+ * @param {number} y
+ * @param {number} value
+ * @returns {number} value
+ */
 CpuSolver.prototype.set = function(x, y, value) {
     this.back[y * this.w + x] = value;
     return value;
 };
 
-CpuSolver.prototype.step = function(count) {
-    count = count || 1;
+/**
+ * Take one or more steps towards the solution.
+ * @param {number} [n] the number of steps to take
+ * @returns {CpuSolver} this
+ */
+CpuSolver.prototype.step = function(n) {
+    n = n || 1;
     var states = [null, null, null, null];
-    while (count-- > 0 && !this.done) {
+    while (n-- > 0 && !this.done) {
         this.age++;
         var changes = 0;
         for (var y = 0; y < this.h; y++) {
@@ -58,6 +86,10 @@ CpuSolver.prototype.step = function(count) {
     return this;
 };
 
+/**
+ * Draw the current solution state to the canvas.
+ * @returns {CpuSolver} this
+ */
 CpuSolver.prototype.draw = function() {
     if (this.ctx == null) return this;
     var w = this.w, h = this.h, ctx = this.ctx,
@@ -72,13 +104,19 @@ CpuSolver.prototype.draw = function() {
     return this;
 };
 
-CpuSolver.prototype.animate = function() {
+/**
+ * Animate the solution using requestAnimationFrame.
+ * @param {Function} [callback]
+ */
+CpuSolver.prototype.animate = function(callback) {
     var _this = this;
     window.requestAnimationFrame(function() {
         if (!_this.done) {
-            _this.step().draw();
+            _this.step(1).draw();
+            _this.animate(callback);
+        } else {
+            if (callback != null) callback();
         }
-        _this.animate();
     });
     return this;
 };

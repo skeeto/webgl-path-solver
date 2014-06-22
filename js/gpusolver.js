@@ -1,5 +1,12 @@
 /*global Igloo State */
 
+/**
+ * Shortest past solver that runs on the GPU using cellular automata.
+ * @param {number} w width
+ * @param {number} h height
+ * @param {Uint8Array} maze
+ * @param {HTMLCanvasElement} canvas to access WebGL and draw progress
+ */
 function GpuSolver(w, h, maze, canvas) {
     this.statesize = new Float32Array([w, h]);
     this.viewsize = new Float32Array([canvas.width, canvas.height]);
@@ -30,6 +37,10 @@ function GpuSolver(w, h, maze, canvas) {
     this.age = 0;
 }
 
+/**
+ * Swap the foreground and background states.
+ * @returns {GpuSolver} this
+ */
 GpuSolver.prototype.swap = function() {
     var tmp = this.textures.fore;
     this.textures.fore = this.textures.back;
@@ -37,6 +48,11 @@ GpuSolver.prototype.swap = function() {
     return this;
 };
 
+/**
+ * Set a new maze to solve, resetting the solver.
+ * @param {Uint8Array} maze
+ * @returns {GpuSolver} this
+ */
 GpuSolver.prototype.set = function(maze) {
     var w = this.statesize[0], h = this.statesize[1],
         rgba = new Uint8Array(w * h * 4);
@@ -53,6 +69,11 @@ GpuSolver.prototype.set = function(maze) {
     return this;
 };
 
+/**
+ * Take one or more steps towards the solution.
+ * @param {number} [n] the number of steps to take
+ * @returns {GpuSolver} this
+ */
 GpuSolver.prototype.step = function(n) {
     n = n || 1;
     var gl = this.igloo.gl;
@@ -77,6 +98,10 @@ GpuSolver.prototype.step = function(n) {
     return this;
 };
 
+/**
+ * Draw the current solution state to the canvas.
+ * @returns {GpuSolver} this
+ */
 GpuSolver.prototype.draw = function() {
     var gl = this.igloo.gl;
     this.igloo.defaultFramebuffer.bind();
@@ -90,6 +115,10 @@ GpuSolver.prototype.draw = function() {
     return this;
 };
 
+/**
+ * Animate the solution using requestAnimationFrame.
+ * @param {Function} [callback]
+ */
 GpuSolver.prototype.animate = function(callback) {
     var _this = this;
     window.requestAnimationFrame(function() {
@@ -97,7 +126,7 @@ GpuSolver.prototype.animate = function(callback) {
             _this.step(2).draw();
             _this.animate(callback);
         } else {
-            callback();
+            if (callback != null) callback();
         }
     });
     return this;
