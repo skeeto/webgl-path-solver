@@ -126,9 +126,9 @@ var State = {
      * @returns {string} a CSS color representation for a state
      */
     color: function(state) {
-        return ['#fff', '#000', '#0f0', '#070',
-                '#f00', '#f00', '#f00', '#f00',
-                '#00f', '#00f', '#00f', '#00f'][state];
+        return ['#fff', '#000', '#f00', '#f00',
+                '#af5', '#af5', '#af5', '#af5',
+                '#33f', '#33f', '#33f', '#33f'][state];
     },
 
     /**

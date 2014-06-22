@@ -7,18 +7,15 @@
  * @param {Uint8Array} maze
  * @param {HTMLCanvasElement} [canvas] for drawing progress
  */
-function CpuSolver(maze, w, h, canvas) {
+function CpuSolver(w, h, maze, canvas) {
     this.w = w;
     this.h = h;
     this.ctx = canvas == null ? null : canvas.getContext('2d');
-    this.done = false;
-    this.age = 0;
     this.fore = new Uint32Array(w * h);
-    this.back = maze;
-
-    this.set(0, 0, State.BEGIN);
-    this.set(this.w - 1, this.h - 1, State.END);
-    this.swap();
+    this.done = false;
+    this.cancelled = false;
+    this.age = 0;
+    this.reset(maze);
 }
 
 /**
@@ -55,6 +52,22 @@ CpuSolver.prototype.get = function(x, y) {
 CpuSolver.prototype.set = function(x, y, value) {
     this.back[y * this.w + x] = value;
     return value;
+};
+
+/**
+ * Set a new maze to solve, resetting the solver.
+ * @param {Uint8Array} maze
+ * @returns {CpuSolver} this
+ */
+CpuSolver.prototype.reset = function(maze) {
+    this.back = new Uint8Array(maze);
+    this.set(0, 0, State.BEGIN);
+    this.set(this.w - 1, this.h - 1, State.END);
+    this.swap();
+    this.done = false;
+    this.cancelled = false;
+    this.age = 0;
+    return this;
 };
 
 /**
@@ -111,12 +124,22 @@ CpuSolver.prototype.draw = function() {
 CpuSolver.prototype.animate = function(callback) {
     var _this = this;
     window.requestAnimationFrame(function() {
-        if (!_this.done) {
+        if (!_this.done && !_this.cancelled) {
             _this.step(1).draw();
             _this.animate(callback);
         } else {
-            if (callback != null) callback();
+            if (!_this.cancelled && callback != null) callback();
+            _this.cancelled = false;
         }
     });
+    return this;
+};
+
+/**
+ * Stop animation without calling the callback.
+ * @returns {CpuSolver} this
+ */
+CpuSolver.prototype.cancel = function() {
+    this.cancelled = true;
     return this;
 };

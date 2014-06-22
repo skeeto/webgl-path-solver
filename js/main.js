@@ -19,7 +19,7 @@ function init() {
     solver = new GpuSolver(w, h, maze, canvas).draw().animate(reset);
     function reset() {
         window.setTimeout(function() {
-            solver.set(Maze.kruskal(w, h));
+            solver.reset(Maze.kruskal(w, h));
             solver.animate(reset);
         }, RESET_DELAY);
     }

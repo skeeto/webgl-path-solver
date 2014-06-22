@@ -32,8 +32,9 @@ function GpuSolver(w, h, maze, canvas) {
     this.framebuffers = {
         step: igloo.framebuffer()
     };
-    this.set(maze);
+    this.reset(maze);
     this.done = false;
+    this.cancelled = false;
     this.age = 0;
 }
 
@@ -53,7 +54,7 @@ GpuSolver.prototype.swap = function() {
  * @param {Uint8Array} maze
  * @returns {GpuSolver} this
  */
-GpuSolver.prototype.set = function(maze) {
+GpuSolver.prototype.reset = function(maze) {
     var w = this.statesize[0], h = this.statesize[1],
         rgba = new Uint8Array(w * h * 4);
     for (var i = 0; i < maze.length; i++) {
@@ -66,6 +67,7 @@ GpuSolver.prototype.set = function(maze) {
     rgba[rgba.length - 4] = State.END   * 255 / 11;
     this.textures.fore.subset(rgba, 0, 0, w, h);
     this.done = false;
+    this.age = 0;
     return this;
 };
 
@@ -118,16 +120,27 @@ GpuSolver.prototype.draw = function() {
 /**
  * Animate the solution using requestAnimationFrame.
  * @param {Function} [callback]
+ * @returns {GpuSolver} this
  */
 GpuSolver.prototype.animate = function(callback) {
     var _this = this;
     window.requestAnimationFrame(function() {
-        if (!_this.done) {
+        if (!_this.done && !_this.cancelled) {
             _this.step(2).draw();
             _this.animate(callback);
         } else {
-            if (callback != null) callback();
+            if (!_this.cancelled && callback != null) callback();
+            _this.cancelled = false;
         }
     });
+    return this;
+};
+
+/**
+ * Stop animation without calling the callback.
+ * @returns {GpuSolver} this
+ */
+GpuSolver.prototype.cancel = function() {
+    this.cancelled = true;
     return this;
 };
