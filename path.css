@@ -1,6 +1,6 @@
 body {
     font-family: sans-serif;
-    width: 1024px;
+    width: 1000px;
     margin: 0 auto;
     background: black;
     color: salmon;
@@ -8,9 +8,19 @@ body {
 
 h1, h2 {
     text-align: center;
-    margin: 5px 0;
+    margin: 3px 0;
+}
+
+h1 {
+    font-size: 24px;
 }
 
 canvas {
     border: 1px solid gray;
+}
+
+.description {
+    width: 500px;
+    margin: auto;
+    text-align: justify;
 }

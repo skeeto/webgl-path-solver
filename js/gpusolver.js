@@ -1,4 +1,4 @@
-/*global Igloo*/
+/*global Igloo State */
 
 function GpuSolver(w, h, maze, canvas) {
     this.statesize = new Float32Array([w, h]);
@@ -49,6 +49,7 @@ GpuSolver.prototype.set = function(maze) {
     rgba[0]               = State.BEGIN * 255 / 11;
     rgba[rgba.length - 4] = State.END   * 255 / 11;
     this.textures.fore.subset(rgba, 0, 0, w, h);
+    this.done = false;
     return this;
 };
 
@@ -89,13 +90,15 @@ GpuSolver.prototype.draw = function() {
     return this;
 };
 
-GpuSolver.prototype.animate = function() {
+GpuSolver.prototype.animate = function(callback) {
     var _this = this;
     window.requestAnimationFrame(function() {
         if (!_this.done) {
             _this.step(2).draw();
+            _this.animate(callback);
+        } else {
+            callback();
         }
-        _this.animate();
     });
     return this;
 };

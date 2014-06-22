@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>GPU Pathfinding (WebGL)</title>
+    <title>WebGL Shortest Path Solver</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <link rel="stylesheet" href="path.css"/>
     <script src="lib/jquery-2.1.1.min.js"></script>
@@ -15,6 +15,17 @@
   </head>
   <body>
     <h1>WebGL Shortest Path Solver</h1>
-    <canvas id="display" width="1024" height="512"></canvas>
+    <canvas id="display" width="1000" height="600"></canvas>
+    <div class="description">
+      <p>
+        This maze is being solved entirely on your GPU as a 12-state
+        cellular automata. All branches are searched in parallel
+        (green) as they are discovered, leaving a trail of breadcrumbs
+        pointing to the start (red). As soon as the end cell (red) is
+        reached, a route is traced (blue) along the breadcrumb root
+        back to the start. This final route trace would be better done
+        on the CPU.
+      </p>
+    </div>
   </body>
 </html>
