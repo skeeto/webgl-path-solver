@@ -1,4 +1,4 @@
-/*global Forest */
+/*global Forest State */
 
 /**
  * Collection of maze-generation algorithms on typed arrays.
@@ -185,6 +185,35 @@ Maze.prim = function(w, h) {
                     cy: wall.cy + dir.y * 2
                 });
             }
+        }
+    }
+    return maze;
+};
+
+/**
+ * Create a maze from an image, one pixel per cell. Black is a wall,
+ * red is BEGIN, blue is END and everything else is open.
+ * @param {HTMLImageElement} image
+ * @returns {Uint32Array} the image encoded as a maze, with BEGIN and END
+ */
+Maze.fromImage = function(image) {
+    var canvas = document.createElement('canvas'),
+        w = canvas.width = image.width,
+        h = canvas.height = image.height,
+        maze = new Uint32Array(w * h),
+        ctx = canvas.getContext('2d');
+    ctx.drawImage(image, 0, 0, w, h);
+    var data = ctx.getImageData(0, 0, w, h).data;
+    for (var i = 0; i < w * h; i++) {
+        var r = data[i * 4 + 0],
+            g = data[i * 4 + 1],
+            b = data[i * 4 + 2];
+        if (r === 0 && g === 0 && b === 0) {
+            maze[i] = State.WALL;
+        } else if (r === 255 && g === 0 && b === 0) {
+            maze[i] = State.BEGIN;
+        } else if (r === 0 && g === 0 && b === 255) {
+            maze[i] = State.END;
         }
     }
     return maze;
