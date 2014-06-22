@@ -10,7 +10,7 @@ function Forest() {
 Forest.prototype.root = function() {
     var set = this;
     while (set.parent !== set) set = set.parent;
-    return set;
+    return (this.parent = set);
 };
 
 Forest.prototype.equals = function(set) {
