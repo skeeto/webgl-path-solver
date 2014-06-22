@@ -31,13 +31,13 @@ void main() {
     } else if (v == WALL) {
         gl_FragColor = vec4(0, 0, 0, 0);
     } else if (v == BEGIN) {
-        gl_FragColor = vec4(0, 1, 0, 1);
-    } else if (v == END) {
-        gl_FragColor = vec4(0, 1, 0, 1);
-    } else if (v >= 4 && v <= 7) {
         gl_FragColor = vec4(1, 0, 0, 1);
-    } else if (v >= 8 && v <= 11) {
-        gl_FragColor = vec4(0, 0, 1, 1);
+    } else if (v == END) {
+        gl_FragColor = vec4(1, 0, 0, 1);
+    } else if (v >= 4 && v <= 7) {       // flow
+        gl_FragColor = vec4(0.65, 1, 0.34, 1);
+    } else if (v >= 8 && v <= 11) {      // route
+        gl_FragColor = vec4(0.19, 0.19, 1, 1);
     } else {
         gl_FragColor = vec4(1, 0, 1, 1); // error
     }

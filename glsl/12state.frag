@@ -28,14 +28,14 @@ bool isFlow(int state) {
     return (state >= 4 && state <= 7);
 }
 
-int findFlow(int n, int e, int s, int w) {
-    if (isFlow(n) || n == BEGIN)
+int findFlow(int ns[4]) {
+    if (isFlow(ns[0]) || ns[0] == BEGIN)
         return 0;
-    else if (isFlow(e) || e == BEGIN)
+    else if (isFlow(ns[1]) || ns[1] == BEGIN)
         return 1;
-    else if (isFlow(s) || s == BEGIN)
+    else if (isFlow(ns[2]) || ns[2] == BEGIN)
         return 2;
-    else if (isFlow(w) || w == BEGIN)
+    else if (isFlow(ns[3]) || ns[3] == BEGIN)
         return 3;
     else
         return -1;
@@ -45,14 +45,14 @@ bool isRoute(int state) {
     return state >= 8 && state <= 11;
 }
 
-int findRoute(int n, int e, int s, int w) {
-    if (isRoute(n) || n == END)
+int findRoute(int ns[4]) {
+    if (isRoute(ns[0]) || ns[0] == END)
         return 0;
-    else if (isRoute(e) || e == END)
+    else if (isRoute(ns[1]) || ns[1] == END)
         return 1;
-    else if (isRoute(s) || s == END)
+    else if (isRoute(ns[2]) || ns[2] == END)
         return 2;
-    else if (isRoute(w) || w == END)
+    else if (isRoute(ns[3]) || ns[3] == END)
         return 3;
     else
         return -1;
@@ -62,29 +62,32 @@ bool pointsAtMe(int v, int relation) {
     return mod(float(v), 4.0) == mod(float(relation + 2), 4.0);
 }
 
+int get(int ns[4], int i) {
+    if (i == 0)
+        return ns[0];
+    else if (i == 1)
+        return ns[1];
+    else if (i == 2)
+        return ns[2];
+    else
+        return ns[3];
+}
+
 void main() {
     int v = state(vec2( 0,  0));
-    int n = state(vec2( 0, -1));
-    int e = state(vec2( 1,  0));
-    int s = state(vec2( 0,  1));
-    int w = state(vec2(-1,  0));
-    int flow = findFlow(n, e, s, w);
-    int route = findRoute(n, e, s, w);
+    int ns[4];
+    ns[0] = state(vec2( 0, -1));
+    ns[1] = state(vec2( 1,  0));
+    ns[2] = state(vec2( 0,  1));
+    ns[3] = state(vec2(-1,  0));
+    int flow = findFlow(ns);
+    int route = findRoute(ns);
     if (v == OPEN) {
         if (flow >= 0) {
             v = 4 + flow;
         }
     } else if (isFlow(v)) {
-        int src;
-        if (route == 0)
-            src = n;
-        else if (route == 1)
-            src = e;
-        else if (route == 2)
-            src = s;
-        else
-            src = w;
-        if (route >= 0 && pointsAtMe(src, route)) {
+        if (route >= 0 && pointsAtMe(get(ns, route), route)) {
             v = v + 4;
         }
     } else if (v == END) {
@@ -93,9 +96,8 @@ void main() {
         }
     } else if (v == BEGIN) {
         if (route >= 0) {
-            v = ROUTE_N;
+            v = get(ns, route);
         }
     }
-
     gl_FragColor = vec4(float(v) / 11.0, 0, 0, 1);
 }
