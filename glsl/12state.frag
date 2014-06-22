@@ -58,6 +58,10 @@ int findRoute(int n, int e, int s, int w) {
         return -1;
 }
 
+bool pointsAtMe(int v, int relation) {
+    return mod(float(v), 4.0) == mod(float(relation + 2), 4.0);
+}
+
 void main() {
     int v = state(vec2( 0,  0));
     int n = state(vec2( 0, -1));
@@ -70,6 +74,28 @@ void main() {
         if (flow >= 0) {
             v = 4 + flow;
         }
+    } else if (isFlow(v)) {
+        int src;
+        if (route == 0)
+            src = n;
+        else if (route == 1)
+            src = e;
+        else if (route == 2)
+            src = s;
+        else
+            src = w;
+        if (route >= 0 && pointsAtMe(src, route)) {
+            v = v + 4;
+        }
+    } else if (v == END) {
+        if (flow >= 0) {
+            v = flow + 8;
+        }
+    } else if (v == BEGIN) {
+        if (route >= 0) {
+            v = ROUTE_N;
+        }
     }
+
     gl_FragColor = vec4(float(v) / 11.0, 0, 0, 1);
 }
