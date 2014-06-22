@@ -25,15 +25,30 @@ var Maze = {
  * @returns {Array} array
  */
 Maze.shuffle = function(array) {
-    var counter = array.length, temp, index;
+    var counter = array.length;
     while (counter > 0) {
-        index = Math.floor(Math.random() * counter);
+        var index = Math.floor(Math.random() * counter);
         counter--;
-        temp = array[counter];
+        var tmp = array[counter];
         array[counter] = array[index];
-        array[index] = temp;
+        array[index] = tmp;
     }
     return array;
+};
+
+/**
+ * @param {Array} array
+ * @returns {*} a removed random array element
+ */
+Maze.random = function(array) {
+    var i = Math.floor(Math.random() * array.length);
+    if (i === array.length - 1) {
+        return array.pop();
+    } else {
+        var element = array[i];
+        array[i] = array.pop();
+        return element;
+    }
 };
 
 /**
@@ -70,7 +85,7 @@ Maze.filled = function(w, h, value) {
 /**
  * Generate a random maze using Kruskal's algorithm. Kruskal mazes
  * have a much higher branching factor than DFS mazes, making them a
- * lot more interesting for this project.
+ * lot more interesting for GPU searching.
  * @param {number} w maze width
  * @param {number} h maze height
  * @returns {Uint32Array} with walls as 1 and open space as 0
@@ -106,7 +121,10 @@ Maze.kruskal = function(w, h) {
 };
 
 /**
- * Generate a maze using a random depth-first search.
+ * Generate a maze using a random depth-first search. This kind of
+ * maze has long winding paths with a very low branching factor,
+ * making it a really poor fit for GPU solving. It often solves the
+ * maze before exploring every branch.
  * @param {number} w maze width
  * @param {number} h maze height
  * @returns {Uint32Array} with walls as 1 and open space as 0
@@ -131,6 +149,39 @@ Maze.dfs = function(w, h) {
                     stack.push({x: xxx, y: yyy, dirs: Maze.dirs()});
                 }
             }
+        }
+    }
+    return maze;
+};
+
+/**
+ * Generate a maze using Prim's algorithm. These mazes have an
+ * extremely high branching factor and is very effectively searched on
+ * a GPU.
+ * @param {number} w maze width
+ * @param {number} h maze height
+ * @returns {Uint32Array} with walls as 1 and open space as 0
+ */
+Maze.prim = function(w, h) {
+    var maze = Maze.filled(w, h),
+        walls = [
+            {x: 1, y: 0, dx: 1, dy: 0},
+            {x: 0, y: 1, dx: 0, dy: 1}
+        ];
+    maze[Maze.i(0, 0, w, h)] = 0;
+    while (walls.length > 0) {
+        var wall = Maze.random(walls),
+            x = wall.x + wall.dx,
+            y = wall.y + wall.dy,
+            celli = Maze.i(x, y, w, h),
+            walli = Maze.i(wall.x, wall.y, w, h);
+        if (Maze.inBounds(x, y, w, h) && maze[celli] === 1) {
+            maze[celli] = 0;
+            maze[walli] = 0;
+            walls.push({x: x - 1, y: y, dx: -1, dy:  0});
+            walls.push({x: x + 1, y: y, dx:  1, dy:  0});
+            walls.push({x: x, y: y + 1, dx:  0, dy:  1});
+            walls.push({x: x, y: y - 1, dx:  0, dy: -1});
         }
     }
     return maze;
