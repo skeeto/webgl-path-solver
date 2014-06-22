@@ -27,6 +27,7 @@ function GpuSolver(w, h, maze, canvas) {
     };
     this.set(maze);
     this.done = false;
+    this.age = 0;
 }
 
 GpuSolver.prototype.swap = function() {
@@ -51,17 +52,27 @@ GpuSolver.prototype.set = function(maze) {
     return this;
 };
 
-GpuSolver.prototype.step = function() {
+GpuSolver.prototype.step = function(n) {
+    n = n || 1;
     var gl = this.igloo.gl;
-    this.framebuffers.step.attach(this.textures.back);
-    this.textures.fore.bind(0);
     gl.viewport(0, 0, this.statesize[0], this.statesize[1]);
-    this.programs.step.use()
+    var step = this.programs.step.use()
         .attrib('quad', this.buffers.quad, 2)
         .uniform('scale', this.statesize)
-        .uniformi('maze', 0)
-        .draw(gl.TRIANGLE_STRIP, Igloo.QUAD2.length / 2);
-    this.swap();
+        .uniformi('maze', 0);
+    var rgba = new Uint8Array(4);
+    while (n-- > 0 && !this.done) {
+        this.age++;
+        this.framebuffers.step.attach(this.textures.back);
+        this.textures.fore.bind(0);
+        step.draw(gl.TRIANGLE_STRIP, Igloo.QUAD2.length / 2);
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, rgba);
+        /* Test if START changed into a ROUTE. */
+        if (State.isRoute(Math.round(rgba[0] * 11 / 255))) {
+            this.done = true;
+        }
+        this.swap();
+    }
     return this;
 };
 
@@ -82,7 +93,7 @@ GpuSolver.prototype.animate = function() {
     var _this = this;
     window.requestAnimationFrame(function() {
         if (!_this.done) {
-            _this.step().draw();
+            _this.step(2).draw();
         }
         _this.animate();
     });
