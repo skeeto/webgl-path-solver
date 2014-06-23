@@ -27,7 +27,8 @@ function GpuSolver(w, h, maze, canvas) {
     };
     this.textures = {
         fore: igloo.texture(null, null, null, gl.NEAREST).blank(w, h),
-        back: igloo.texture(null, null, null, gl.NEAREST).blank(w, h)
+        back: igloo.texture(null, null, null, gl.NEAREST).blank(w, h),
+        arrow: igloo.texture().set(GpuSolver.ARROW32, 32, 32)
     };
     this.framebuffers = {
         step: igloo.framebuffer()
@@ -37,6 +38,30 @@ function GpuSolver(w, h, maze, canvas) {
     this.cancelled = false;
     this.age = 0;
 }
+
+/**
+ * Arrow texture.
+ * @const
+ * @type {Uint8Array}
+ */
+GpuSolver.ARROW32 = (function(size) {
+    size = size || 32;
+    var canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = '#fff';
+    ctx.translate(size / 2, size / 2);
+    ctx.scale(size, -size);
+    ctx.beginPath();
+    ctx.moveTo( 0/4, -1/4);
+    ctx.lineTo(-1/4,  1/4);
+    ctx.lineTo( 1/4,  1/4);
+    ctx.fill();
+    window.foo = canvas.toDataURL();
+    return new Uint8Array(ctx.getImageData(0, 0, size, size).data);
+}(32));
 
 /**
  * Swap the foreground and background states.
@@ -108,11 +133,14 @@ GpuSolver.prototype.draw = function() {
     var gl = this.igloo.gl;
     this.igloo.defaultFramebuffer.bind();
     this.textures.fore.bind(0);
+    this.textures.arrow.bind(1);
     gl.viewport(0, 0, this.viewsize[0], this.viewsize[1]);
     this.programs.draw.use()
         .attrib('quad', this.buffers.quad, 2)
-        .uniform('scale', this.viewsize)
-        .uniformi('maze', 0)
+        .uniform('viewport', this.viewsize)
+        .uniform('statesize', this.statesize)
+        .uniform('statesize', this.statesize)
+        .uniformi('arrow', 1)
         .draw(gl.TRIANGLE_STRIP, Igloo.QUAD2.length / 2);
     return this;
 };
