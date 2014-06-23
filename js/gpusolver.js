@@ -154,7 +154,7 @@ GpuSolver.prototype.animate = function(callback) {
     var _this = this;
     window.requestAnimationFrame(function() {
         if (!_this.done && !_this.cancelled) {
-            _this.step(2).draw();
+            _this.step(1).draw();
             _this.animate(callback);
         } else {
             if (!_this.cancelled && callback != null) callback();
