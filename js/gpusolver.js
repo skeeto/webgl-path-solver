@@ -45,7 +45,6 @@ function GpuSolver(w, h, maze, canvas) {
  * @type {Uint8Array}
  */
 GpuSolver.ARROW32 = (function(size) {
-    size = size || 32;
     var canvas = document.createElement('canvas');
     canvas.width = canvas.height = size;
     var ctx = canvas.getContext('2d');
@@ -59,7 +58,6 @@ GpuSolver.ARROW32 = (function(size) {
     ctx.lineTo(-1/4,  1/4);
     ctx.lineTo( 1/4,  1/4);
     ctx.fill();
-    window.foo = canvas.toDataURL();
     return new Uint8Array(ctx.getImageData(0, 0, size, size).data);
 }(32));
 
