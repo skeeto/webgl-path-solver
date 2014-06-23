@@ -10,7 +10,7 @@ function nearest(dim, scale) {
 var solver = null;
 function init() {
     var canvas = $('#display')[0],
-        scale = 12,
+        scale = 14,
         w = nearest(canvas.width, scale),
         h = nearest(canvas.height, scale),
         maze = Maze.kruskal(w, h);
