@@ -138,11 +138,24 @@ CpuSolver.prototype.draw = function() {
  */
 CpuSolver.prototype.animate = function(callback) {
     var _this = this;
+    if (this.gif == null) {
+        this.gif = new GIF({
+            workers: 2,
+            quality: 20,
+            workerScript: 'lib/gif.worker.js'
+        });
+        this.gif.on('finished', function(blob) {
+            window.open(URL.createObjectURL(blob));
+        });
+    }
     window.requestAnimationFrame(function() {
         if (!_this.done && !_this.cancelled) {
+            _this.gif.addFrame(_this.ctx.canvas, {copy: true, delay: 200});
             _this.step(1).draw();
             _this.animate(callback);
         } else {
+            _this.gif.addFrame(this.ctx, {copy: true, delay: 200});
+            _this.gif.render();
             if (!_this.cancelled && callback != null) callback();
             _this.cancelled = false;
         }
