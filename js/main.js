@@ -1,6 +1,6 @@
 /*global CpuSolver GpuSolver Maze */
 
-var RESET_DELAY = 30 * 1000;
+var RESET_DELAY = 10 * 1000;
 
 function nearest(dim, scale) {
     var floor = Math.floor(dim / scale);
