@@ -113,10 +113,12 @@ GpuSolver.prototype.step = function(n) {
         this.framebuffers.step.attach(this.textures.back);
         this.textures.fore.bind(0);
         step.draw(gl.TRIANGLE_STRIP, Igloo.QUAD2.length / 2);
-        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, rgba);
-        /* Test if START changed into a ROUTE. */
-        if (State.isRoute(Math.round(rgba[0] * 11 / 255))) {
-            this.done = true;
+        if ((n % 500) === 0) {
+            /* Test if START changed into a ROUTE. */
+            gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, rgba);
+            if (State.isRoute(Math.round(rgba[0] * 11 / 255))) {
+                this.done = true;
+            }
         }
         this.swap();
     }
