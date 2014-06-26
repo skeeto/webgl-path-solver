@@ -18,21 +18,15 @@
     <canvas id="display" width="1000" height="600"></canvas>
     <div class="description">
       <p>
-        This maze is being solved entirely on your GPU as a 12-state
-        cellular automata. All branches are searched in parallel
-        (green) as they are discovered, leaving a trail of breadcrumbs
-        pointing to the start (red). As soon as the end cell (red) is
-        reached, a route is traced (blue) along the breadcrumb root
-        back to the start. This final route trace would be better done
-        on the CPU.
+        This maze is being solved entirely on your GPU
+        as <a href="http://nullprogram.com/blog/2014/06/22/">a
+        12-state cellular automation</a>. All branches are searched in
+        parallel (green) as they are discovered, leaving a trail of
+        breadcrumbs pointing to the start (red). As soon as the end
+        cell (red) is reached, a route is traced (blue) along the
+        breadcrumb root back to the start. This final route trace
+        would be better done on the CPU.
       </p>
-      <ul>
-        <li>
-          <a href="http://nullprogram.com/blog/2014/06/22/">
-            A GPU Approach to Path Finding
-          </a>
-        </li>
-      </ul>
     </div>
   </body>
 </html>
